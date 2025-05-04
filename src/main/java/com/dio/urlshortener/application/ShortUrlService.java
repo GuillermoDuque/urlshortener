@@ -12,9 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 
 public class ShortUrlService {
 
@@ -33,7 +31,7 @@ public class ShortUrlService {
     }
 
     public ShortenUrlResponse createShortUrlResponse(ShortenUrlRequest request, HttpServletRequest servletRequest) {
-        log.info("createShortUrlResponse|in. Building full response for longUrl='{}'", request.longUrl());
+        log.debug("createShortUrlResponse|in. Building full response for longUrl='{}'", request.longUrl());
 
         ShortUrl shortUrl = createShortUrl(request);
 
@@ -44,7 +42,7 @@ public class ShortUrlService {
 
         String fullShortUrl = base + "/" + shortUrl.getShortCode();
 
-        log.info("createShortUrlResponse|out. Returning shortUrl='{}'", fullShortUrl);
+        log.debug("createShortUrlResponse|out. Returning shortUrl='{}'", fullShortUrl);
 
         return new ShortenUrlResponse(
                 shortUrl.getShortCode(),
@@ -58,19 +56,32 @@ public class ShortUrlService {
 
 
     public ShortUrl createShortUrl(ShortenUrlRequest request) {
-        log.info("createShortUrl|in. Generating short URL for longUrl='{}'", request.longUrl());
+        log.debug("createShortUrl|in. Generating or retrieving short URL for longUrl='{}'", request.longUrl());
+
+        Optional<ShortUrl> existing = cache.getByLongUrl(request.longUrl());
+        if (existing.isPresent()) {
+            log.debug("createShortUrl|cache hit. Reusing shortCode='{}'", existing.get().getShortCode());
+            return existing.get();
+        }
+
+        Optional<ShortUrl> inDb = repository.findByLongUrl(request.longUrl());
+        if (inDb.isPresent()) {
+            cache.put(inDb.get());
+            log.debug("createShortUrl|db hit. Reusing shortCode='{}'", inDb.get().getShortCode());
+            return inDb.get();
+        }
 
         var shortUrl = new ShortUrl(generator.generate(), request.longUrl());
         repository.save(shortUrl);
         cache.put(shortUrl);
 
-        log.info("createShortUrl|out. Created shortCode='{}'", shortUrl.getShortCode());
+        log.debug("createShortUrl|out. Created new shortCode='{}'", shortUrl.getShortCode());
         return shortUrl;
     }
 
 
     public Optional<ShortUrl> updateShortUrl(String shortCode, ShortenUrlUpdateRequest request) {
-        log.info("updateShortUrl|in. Attempting to update shortCode='{}'", shortCode);
+        log.debug("updateShortUrl|in. Attempting to update shortCode='{}'", shortCode);
 
         return repository.findByShortCode(shortCode).map(existing -> {
             if (request.longUrl() != null) {
@@ -83,7 +94,7 @@ public class ShortUrlService {
             repository.save(existing);
             cache.put(existing);
 
-            log.info("updateShortUrl|out. Updated shortCode='{}' successfully. longUrl='{}', isActive={}",
+            log.debug("updateShortUrl|out. Updated shortCode='{}' successfully. longUrl='{}', isActive={}",
                     existing.getShortCode(), existing.getLongUrl(), existing.isActive());
 
             return existing;

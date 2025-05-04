@@ -22,4 +22,9 @@ public class JpaShortUrlRepository implements ShortUrlRepository {
     public Optional<ShortUrl> findByShortCode(String shortCode) {
         return delegate.findById(shortCode);
     }
+
+    @Override
+    public Optional<ShortUrl> findByLongUrl(String longUrl) {
+        return delegate.findByLongUrl(longUrl);
+    }
 }

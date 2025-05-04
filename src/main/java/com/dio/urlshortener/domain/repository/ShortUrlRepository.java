@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface ShortUrlRepository {
     ShortUrl save(ShortUrl url);
     Optional<ShortUrl> findByShortCode(String shortCode);
+    Optional<ShortUrl> findByLongUrl(String longUrl);
 }

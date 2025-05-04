@@ -1,5 +1,4 @@
 app:
-  base-url: "http://localhost:9999/"
   cache:
     short-url:
       expire-after-write: 10m

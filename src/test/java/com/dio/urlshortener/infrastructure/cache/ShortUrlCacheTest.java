@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ShortUrlCacheTest extends BaseTestSupport {
@@ -46,7 +47,7 @@ class ShortUrlCacheTest extends BaseTestSupport {
         ShortUrl url = createUrl(SHORT_CODE, LONG_URL);
         cache.put(url);
 
-        cache.invalidate(SHORT_CODE);
+        cache.invalidate(SHORT_CODE, LONG_URL);
 
         assertThat(cache.getIfPresent(SHORT_CODE)).isEmpty();
     }

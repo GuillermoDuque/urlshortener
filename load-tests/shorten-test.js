@@ -16,7 +16,7 @@ export const options = {
 };
 
 export default function () {
-  const res = http.post('http://localhost:8080/shorten', JSON.stringify({
+  const res = http.post('https://urlshortener-a9ft.onrender.com/shorten', JSON.stringify({
     longUrl: 'https://example.com'
   }), {
     headers: { 'Content-Type': 'application/json' },
