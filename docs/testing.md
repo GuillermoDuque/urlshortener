@@ -8,7 +8,7 @@ Esto mejora la velocidad de desarrollo, reduce el costo de mantenimiento y permi
 
 ## Enfoque piramidal
 
-![testing-pyramid.png](../testing-pyramid.png)
+![testing-pyramid.webp](static/testing-pyramid.webp)
 
 * Pruebas unitarias: validan la lógica de negocio en componentes individuales sin dependencias externas.
 * Pruebas de integración: validan la interacción entre capas (por ejemplo, controladores ↔ servicios).
