@@ -5,6 +5,7 @@ import com.dio.urlshortener.domain.model.ShortUrl;
 import com.dio.urlshortener.domain.repository.ShortUrlRepository;
 import com.dio.urlshortener.domain.service.ShortCodeGenerator;
 import com.dio.urlshortener.infrastructure.cache.ShortUrlCache;
+import com.dio.urlshortener.presentation.dto.ShortUrlStatsResponse;
 import com.dio.urlshortener.presentation.dto.ShortenUrlRequest;
 import com.dio.urlshortener.presentation.dto.ShortenUrlResponse;
 import com.dio.urlshortener.presentation.dto.ShortenUrlUpdateRequest;
@@ -115,9 +116,24 @@ public class ShortUrlService {
                 .filter(ShortUrl::isActive)
                 .map(shortUrl -> {
                     log.debug("resolveShortUrl|out. Found and active. longUrl='{}'", shortUrl.getLongUrl());
+                    shortUrl.incrementAccessCount();
+                    repository.save(shortUrl);
+                    cache.put(shortUrl);
                     return shortUrl;
                 });
     }
+
+    public Optional<ShortUrlStatsResponse> getStats(String shortCode) {
+        return findByShortCode(shortCode)
+                .map(shortUrl -> new ShortUrlStatsResponse(
+                        shortUrl.getShortCode(),
+                        shortUrl.getLongUrl(),
+                        shortUrl.isActive(),
+                        shortUrl.getAccessCount(),
+                        shortUrl.getCreatedAt()
+                ));
+    }
+
 
     private Optional<ShortUrl> findInDbAndCacheIfPresent(String shortCode) {
         log.debug("findInDbAndCacheIfPresent|in. shortCode='{}' not found in cache. Querying DB...", shortCode);

@@ -1,7 +1,7 @@
 package com.dio.urlshortener.presentation;
 
 import com.dio.urlshortener.application.ShortUrlService;
-import com.dio.urlshortener.domain.model.ShortUrl;
+import com.dio.urlshortener.presentation.dto.ShortUrlStatsResponse;
 import com.dio.urlshortener.presentation.dto.ShortenUrlRequest;
 import com.dio.urlshortener.presentation.dto.ShortenUrlResponse;
 import com.dio.urlshortener.presentation.dto.ShortenUrlUpdateRequest;
@@ -29,11 +29,11 @@ public class ShortUrlController {
             @Valid @RequestBody ShortenUrlRequest request,
             HttpServletRequest servletRequest) {
 
-        log.info("shorten|in. Creating short URL for '{}'", request.longUrl());
+        log.debug("shorten|in. Creating short URL for '{}'", request.longUrl());
 
         var response = service.createShortUrlResponse(request, servletRequest);
 
-        log.info("shorten|out. Short URL created: {}", response.shortUrl());
+        log.debug("shorten|out. Short URL created: {}", response.shortUrl());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -59,12 +59,12 @@ public class ShortUrlController {
             @PathVariable String shortCode,
             @RequestBody ShortenUrlUpdateRequest request) {
 
-        log.info("update|in. Updating shortCode='{}' with longUrl='{}', isActive={}",
+        log.debug("update|in. Updating shortCode='{}' with longUrl='{}', isActive={}",
                 shortCode, request.longUrl(), request.isActive());
 
         return service.updateShortUrl(shortCode, request)
                 .map(updated -> {
-                    log.info("update|out. shortCode='{}' updated successfully", shortCode);
+                    log.debug("update|out. shortCode='{}' updated successfully", shortCode);
                     return ResponseEntity.noContent().<Void>build();
                 })
                 .orElseGet(() -> {
@@ -72,6 +72,19 @@ public class ShortUrlController {
                     return ResponseEntity.notFound().build();
                 });
     }
+
+    @GetMapping("/{shortCode}/stats")
+    public ResponseEntity<ShortUrlStatsResponse> getStats(@PathVariable String shortCode) {
+        log.debug("getStats|in. Retrieving stats for shortCode='{}'", shortCode);
+
+        return service.getStats(shortCode)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> {
+                    log.warn("getStats|out. shortCode='{}' not found", shortCode);
+                    return ResponseEntity.notFound().build();
+                });
+    }
+
 
 
 

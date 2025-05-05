@@ -1,5 +1,6 @@
 package com.dio.urlshortener.integration;
 
+import com.dio.urlshortener.presentation.dto.ShortUrlStatsResponse;
 import com.dio.urlshortener.presentation.dto.ShortenUrlResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +8,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class ShortUrlIntegrationTest {
 
     @Autowired
@@ -97,6 +100,44 @@ class ShortUrlIntegrationTest {
         assertThat(testResult)
                 .hasStatus(HttpStatus.BAD_REQUEST);
     }
+
+    @Test
+    void shouldReturnStatsForShortUrl() {
+        String longUrlJson = """
+        {
+          "longUrl": "https://example.com"
+        }
+        """;
+
+        var creationResult = tester.post()
+                .uri("/shorten")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(longUrlJson)
+                .exchange();
+
+        assertThat(creationResult)
+                .hasStatus(HttpStatus.CREATED)
+                .bodyJson()
+                .convertTo(ShortenUrlResponse.class)
+                .satisfies(shortenUrlResponse -> {
+                    tester.get().uri("/" + shortenUrlResponse.shortCode()).exchange();
+                    tester.get().uri("/" + shortenUrlResponse.shortCode()).exchange();
+
+                    var statsResult = tester.get()
+                            .uri("/" + shortenUrlResponse.shortCode() + "/stats")
+                            .exchange();
+
+                    assertThat(statsResult)
+                            .hasStatus(HttpStatus.OK)
+                            .bodyJson()
+                            .convertTo(ShortUrlStatsResponse.class)
+                                    .satisfies(shortUrlStatsResponse -> {
+                                        assertThat(shortUrlStatsResponse.accessCount()).isGreaterThanOrEqualTo(2);
+                                        assertThat(shortUrlStatsResponse.shortCode()).isEqualTo(shortenUrlResponse.shortCode());
+                                    });
+                });
+    }
+
 
 
 

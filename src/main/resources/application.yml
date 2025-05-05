@@ -3,7 +3,6 @@ app:
     short-url:
       expire-after-write: 10m
       expire-after-access: 5m
-      refresh-after-write: 15m
       maximum-size: 10000
       initial-capacity: 100
       record-stats: false
