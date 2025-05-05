@@ -13,7 +13,7 @@ public class ShortUrl {
 
     @Id
     private String shortCode;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String longUrl;
     private boolean isActive;
     private Instant createdAt;
@@ -68,5 +68,9 @@ public class ShortUrl {
 
     public void setAccessCount(long accessCount) {
         this.accessCount = accessCount;
+    }
+
+    public void incrementAccessCount() {
+        this.accessCount++;
     }
 }

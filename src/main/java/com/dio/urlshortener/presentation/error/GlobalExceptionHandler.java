@@ -32,11 +32,11 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.BAD_REQUEST, errorMessage, request);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest request) {
-//        log.error("handleGeneric|Unexpected error", ex);
-//        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error occurred", request);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest request) {
+        log.error("handleGeneric|Unexpected error", ex);
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error occurred", request);
+    }
 
     private ResponseEntity<ApiError> buildError(HttpStatus status, String message, HttpServletRequest request) {
         return ResponseEntity.status(status).body(new ApiError(

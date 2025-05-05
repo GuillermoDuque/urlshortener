@@ -6,7 +6,7 @@ export const options = {
   scenarios: {
     constant_request_rate: {
       executor: 'constant-arrival-rate',
-      rate: 83, // 5000 RPM
+      rate: 84, // 5000 RPM
       timeUnit: '1s',
       duration: '1m',
       preAllocatedVUs: 100,
@@ -16,7 +16,7 @@ export const options = {
 };
 
 export default function () {
-  const res = http.post('https://urlshortener-a9ft.onrender.com/shorten', JSON.stringify({
+  const res = http.post('http://localhost:8080/shorten', JSON.stringify({
     longUrl: 'https://example.com'
   }), {
     headers: { 'Content-Type': 'application/json' },
