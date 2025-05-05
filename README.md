@@ -20,7 +20,7 @@ El objetivo es demostrar buenas prácticas de desarrollo backend, incluyendo:
 - [Base de Datos](docs/database.md)
 - [Testing y Cobertura](docs/testing.md)
 - [Buenas Prácticas y Patrones](docs/best-practices.md)
-- [Arquitectura del Proyecto](docs/architecture.md)
+- [Arquitectura del Proyecto y Escalamiento Productivo](docs/architecture.md)
 - [Cómo levantar el proyecto](#cómo-levantar-el-proyecto)
 - [Supuestos realizados](#supuestos-realizados)
 
