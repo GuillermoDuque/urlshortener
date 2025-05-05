@@ -34,7 +34,7 @@ El objetivo es demostrar buenas prácticas de desarrollo backend, incluyendo:
 | POST   | `/shorten`             | Crea una nueva URL corta a partir de una URL larga. Retorna la URL generada. |
 | GET    | `/{shortCode}`         | Redirige a la URL original si el código corto es válido y está activo.       |
 | PUT    | `/shorten/{shortCode}` | Actualiza la URL larga o el estado activo/inactivo de un código existente.   |
-
+| GET    | `/{shortCode}/stats`   | Retorna estadísticas de acceso (visitas, estado, fecha de creación).         |
 ---
 
 ## Cómo levantar el proyecto
