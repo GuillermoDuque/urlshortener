@@ -13,14 +13,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Short URL API", description = "Endpoints para acortar URLs, redirigir y consultar estadísticas")
 @RestController
+@Validated
 public class ShortUrlController {
 
     private static final Logger log = LoggerFactory.getLogger(ShortUrlController.class);
@@ -61,7 +64,7 @@ public class ShortUrlController {
     )
     @GetMapping("/{shortCode}")
     public ResponseEntity<Void> redirect(
-            @Parameter(description = "Código corto a redirigir") @PathVariable String shortCode) {
+            @NotBlank  @Parameter(description = "Código corto a redirigir") @PathVariable String shortCode) {
 
         log.debug("redirect|in. shortCode='{}'", shortCode);
 
@@ -88,8 +91,8 @@ public class ShortUrlController {
     )
     @PutMapping("/shorten/{shortCode}")
     public ResponseEntity<Void> update(
-            @Parameter(description = "Código corto a actualizar") @PathVariable String shortCode,
-            @RequestBody ShortenUrlUpdateRequest request) {
+            @NotBlank  @Parameter(description = "Código corto a actualizar") @PathVariable String shortCode,
+            @Valid @RequestBody ShortenUrlUpdateRequest request) {
 
         log.debug("update|in. Updating shortCode='{}' with longUrl='{}', isActive={}",
                 shortCode, request.longUrl(), request.isActive());
@@ -115,7 +118,7 @@ public class ShortUrlController {
     )
     @GetMapping("/{shortCode}/stats")
     public ResponseEntity<ShortUrlStatsResponse> getStats(
-            @Parameter(description = "Código corto del que se requieren estadísticas") @PathVariable String shortCode) {
+            @NotBlank @Parameter(description = "Código corto del que se requieren estadísticas") @PathVariable String shortCode) {
 
         log.debug("getStats|in. Retrieving stats for shortCode='{}'", shortCode);
 

@@ -1,6 +1,7 @@
 package com.dio.urlshortener.presentation.error;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,17 @@ public class GlobalExceptionHandler {
         log.warn("handleValidation|{}", errorMessage);
         return buildError(HttpStatus.BAD_REQUEST, errorMessage, request);
     }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiError> handleConstraintViolation(ConstraintViolationException ex, HttpServletRequest request) {
+        var errorMessage = ex.getConstraintViolations().stream()
+                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+                .findFirst()
+                .orElse("Input inválido");
+        log.warn("handleConstraintViolation|{}", errorMessage);
+        return buildError(HttpStatus.BAD_REQUEST, errorMessage, request);
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest request) {
