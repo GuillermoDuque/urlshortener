@@ -1,9 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5433/urlshortener
-    driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: postgres
+    username: url_user
+    password: secret
   jpa:
     hibernate:
       ddl-auto: update
