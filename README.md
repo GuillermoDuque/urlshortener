@@ -39,7 +39,18 @@ El objetivo es demostrar buenas prácticas de desarrollo backend, incluyendo:
 
 ## Cómo levantar el proyecto
 
+### Localmente
+
 Asegúrate de tener Docker y Docker Compose instalados.
+
+```bash
+docker compose -f docker-compose.db.yml up -d
+```
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=postgres
+```
+### En contenedores
 
 ```bash
 docker compose up --build -d
@@ -49,11 +60,12 @@ Esto levantará:
 * La base de datos PostgreSQL(puerto 5433)
 * El backend (8080) con el profile postgres
 
-## Apagar servicios
+### Apagar servicios
 
 ```bash
 docker compose down
 ```
+
 
 ---
 

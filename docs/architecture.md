@@ -115,7 +115,7 @@ Durante el desarrollo se priorizó el uso de tecnologías conocidas y de rápido
 - **Kafka / RabbitMQ**: para procesamiento asincrónico de eventos (como estadísticas de clics).
 - **Kubernetes**: para orquestación y despliegue en producción a gran escala.
 
-![img.png](../img.png)
+![img.png](static/scale.webp)
 
 
 ## Escalamiento Futuro
