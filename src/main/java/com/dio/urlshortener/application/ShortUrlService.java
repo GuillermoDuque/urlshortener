@@ -84,7 +84,7 @@ public class ShortUrlService {
     public Optional<ShortUrl> updateShortUrl(String shortCode, ShortenUrlUpdateRequest request) {
         log.debug("updateShortUrl|in. Attempting to update shortCode='{}'", shortCode);
 
-        return repository.findByShortCode(shortCode).map(existing -> {
+        return findByShortCode(shortCode).map(existing -> {
             if (request.longUrl() != null) {
                 existing.setLongUrl(request.longUrl());
             }

@@ -65,7 +65,7 @@ class ShortUrlServiceTest extends BaseTestSupport {
         assertThat(updated.getLongUrl()).isEqualTo(NEW_URL);
         assertThat(updated.isActive()).isFalse();
         verify(repository).save(updated);
-        verify(cache).put(updated);
+        verify(cache, times(2)).put(any());
     }
 
     @Test

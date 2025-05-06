@@ -71,6 +71,19 @@ Para lograr un sistema verdaderamente robusto y disponible, se recomienda:
 > En un entorno productivo, se recomienda el reemplazo de Caffeine por Redis y la introducción de herramientas como
 > Kafka, Prometheus y Kubernetes.
 
+## Diagrama de Secuencia: Operaciones principales
+
+A continuación se muestra cómo fluyen las operaciones del API a través de los componentes principales (controlador, servicio, caché, repositorio):
+
+![Diagrama de secuencia de los endpoints principales](static/shortener-sequence.webp)
+
+Este diagrama cubre:
+
+- Creación de URL corta (`POST /shorten`)
+- Resolución y redirección (`GET /{shortCode}`)
+- Consulta de estadísticas (`GET /{shortCode}/stats`)
+- Actualización de una URL (`PUT /shorten/{shortCode}`)
+
 ## Estrategia de Generación de Códigos
 
    ``` java
