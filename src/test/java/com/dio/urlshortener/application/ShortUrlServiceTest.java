@@ -1,12 +1,12 @@
 package com.dio.urlshortener.application;
 
+import com.dio.urlshortener.application.dto.ShortenUrlDTO;
 import com.dio.urlshortener.common.BaseTestSupport;
 import com.dio.urlshortener.config.properties.AppProperties;
 import com.dio.urlshortener.domain.model.ShortUrl;
 import com.dio.urlshortener.domain.repository.ShortUrlRepository;
 import com.dio.urlshortener.infrastructure.cache.ShortUrlCache;
 import com.dio.urlshortener.infrastructure.generator.Base62ShortCodeGenerator;
-import com.dio.urlshortener.presentation.dto.ShortenUrlRequest;
 import com.dio.urlshortener.presentation.dto.ShortenUrlUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class ShortUrlServiceTest extends BaseTestSupport {
 
     @Test
     void createShortUrl_shouldSaveUrlAndPutInCache() {
-        ShortenUrlRequest request = new ShortenUrlRequest(LONG_URL);
+        var request = new ShortenUrlDTO(LONG_URL, null);
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         ShortUrl result = service.createShortUrl(request);

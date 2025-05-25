@@ -1,6 +1,7 @@
 package com.dio.urlshortener.presentation;
 
 import com.dio.urlshortener.application.ShortUrlService;
+import com.dio.urlshortener.application.dto.ShortenUrlDTO;
 import com.dio.urlshortener.presentation.dto.ShortUrlStatsResponse;
 import com.dio.urlshortener.presentation.dto.ShortenUrlRequest;
 import com.dio.urlshortener.presentation.dto.ShortenUrlResponse;
@@ -48,7 +49,7 @@ public class ShortUrlController {
 
         log.debug("shorten|in. Creating short URL for '{}'", request.longUrl());
 
-        var response = service.createShortUrlResponse(request, servletRequest);
+        var response = service.createShortUrl(new ShortenUrlDTO(request.longUrl(), request.customShortCode()), servletRequest);
 
         log.debug("shorten|out. Short URL created: {}", response.shortUrl());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

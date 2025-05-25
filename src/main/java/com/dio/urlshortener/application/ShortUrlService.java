@@ -1,12 +1,12 @@
 package com.dio.urlshortener.application;
 
+import com.dio.urlshortener.application.dto.ShortenUrlDTO;
 import com.dio.urlshortener.config.properties.AppProperties;
 import com.dio.urlshortener.domain.model.ShortUrl;
 import com.dio.urlshortener.domain.repository.ShortUrlRepository;
 import com.dio.urlshortener.domain.service.ShortCodeGenerator;
 import com.dio.urlshortener.infrastructure.cache.ShortUrlCache;
 import com.dio.urlshortener.presentation.dto.ShortUrlStatsResponse;
-import com.dio.urlshortener.presentation.dto.ShortenUrlRequest;
 import com.dio.urlshortener.presentation.dto.ShortenUrlResponse;
 import com.dio.urlshortener.presentation.dto.ShortenUrlUpdateRequest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +31,7 @@ public class ShortUrlService {
         this.generator = generator;
     }
 
-    public ShortenUrlResponse createShortUrlResponse(ShortenUrlRequest request, HttpServletRequest servletRequest) {
+    public ShortenUrlResponse createShortUrl(ShortenUrlDTO request, HttpServletRequest servletRequest) {
         log.debug("createShortUrlResponse|in. Building full response for longUrl='{}'", request.longUrl());
 
         ShortUrl shortUrl = createShortUrl(request);
@@ -55,8 +55,7 @@ public class ShortUrlService {
     }
 
 
-
-    public ShortUrl createShortUrl(ShortenUrlRequest request) {
+    public ShortUrl createShortUrl(ShortenUrlDTO request) {
         log.debug("createShortUrl|in. Generating or retrieving short URL for longUrl='{}'", request.longUrl());
 
         Optional<ShortUrl> existing = cache.getByLongUrl(request.longUrl());
@@ -72,7 +71,9 @@ public class ShortUrlService {
             return inDb.get();
         }
 
-        var shortUrl = new ShortUrl(generator.generate(), request.longUrl());
+        var shortCode = resolveShortcode(request);
+        var shortUrl = new ShortUrl(shortCode, request.longUrl());
+
         repository.save(shortUrl);
         cache.put(shortUrl);
 
@@ -143,6 +144,11 @@ public class ShortUrlService {
                     log.debug("findInDbAndCacheIfPresent|out. shortCode='{}' found in DB and cached", shortCode);
                     return found;
                 });
+    }
+
+    private String resolveShortcode(ShortenUrlDTO request) {
+        var customShortCode = request.customShortCode();
+        return customShortCode == null || customShortCode.isBlank() ? generator.generate() : customShortCode;
     }
 
 }

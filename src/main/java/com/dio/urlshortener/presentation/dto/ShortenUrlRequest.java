@@ -9,6 +9,11 @@ public record ShortenUrlRequest(
                 message = "Debe ser una URL válida que comience con http:// o https://"
         )
         @NotBlank
-        String longUrl
+        String longUrl,
+        @Pattern(
+                regexp = "^[a-zA-Z0-9_-]{3,30}$",
+                message = "El shortCode sugerido solo puede contener letras, números, guiones o guiones bajos (3-30 caracteres)"
+        )
+        String customShortCode
 ) {
 }
