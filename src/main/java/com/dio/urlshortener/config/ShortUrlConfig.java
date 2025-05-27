@@ -1,7 +1,7 @@
 package com.dio.urlshortener.config;
 
 import com.dio.urlshortener.application.ShortUrlService;
-import com.dio.urlshortener.config.properties.AppProperties;
+import com.dio.urlshortener.application.port.BaseUrlProvider;
 import com.dio.urlshortener.domain.repository.ShortUrlRepository;
 import com.dio.urlshortener.domain.service.ShortCodeGenerator;
 import com.dio.urlshortener.infrastructure.JpaShortUrlRepository;
@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 public class ShortUrlConfig {
 
     @Bean
-    public ShortUrlService shortUrlService(ShortUrlRepository shortUrlRepository, ShortUrlCache shortUrlCache, AppProperties appProperties, ShortCodeGenerator generator) {
-        return new ShortUrlService(shortUrlRepository, shortUrlCache, appProperties, generator);
+    public ShortUrlService shortUrlService(ShortUrlRepository shortUrlRepository, ShortUrlCache shortUrlCache, BaseUrlProvider baseUrlProvider, ShortCodeGenerator generator) {
+        return new ShortUrlService(shortUrlRepository, shortUrlCache, baseUrlProvider, generator);
     }
 
     @Bean

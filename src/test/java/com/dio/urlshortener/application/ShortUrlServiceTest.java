@@ -1,13 +1,13 @@
 package com.dio.urlshortener.application;
 
 import com.dio.urlshortener.application.dto.ShortenUrlDTO;
+import com.dio.urlshortener.application.dto.ShortenUrlUpdateDTO;
+import com.dio.urlshortener.application.port.BaseUrlProvider;
 import com.dio.urlshortener.common.BaseTestSupport;
-import com.dio.urlshortener.config.properties.AppProperties;
 import com.dio.urlshortener.domain.model.ShortUrl;
 import com.dio.urlshortener.domain.repository.ShortUrlRepository;
 import com.dio.urlshortener.infrastructure.cache.ShortUrlCache;
 import com.dio.urlshortener.infrastructure.generator.Base62ShortCodeGenerator;
-import com.dio.urlshortener.presentation.dto.ShortenUrlUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -28,8 +28,8 @@ class ShortUrlServiceTest extends BaseTestSupport {
     void setUp() {
         repository = mock(ShortUrlRepository.class);
         cache = mock(ShortUrlCache.class);
-        AppProperties properties = mock(AppProperties.class);
-        service = new ShortUrlService(repository, cache, properties, new Base62ShortCodeGenerator());
+        BaseUrlProvider baseUrlProvider = mock(BaseUrlProvider.class);
+        service = new ShortUrlService(repository, cache, baseUrlProvider, new Base62ShortCodeGenerator());
     }
 
     @Test
@@ -57,7 +57,7 @@ class ShortUrlServiceTest extends BaseTestSupport {
         when(repository.findByShortCode(SHORT_CODE)).thenReturn(Optional.of(existing));
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        ShortenUrlUpdateRequest request = new ShortenUrlUpdateRequest(NEW_URL, false);
+        var request = new ShortenUrlUpdateDTO(NEW_URL, false);
         Optional<ShortUrl> result = service.updateShortUrl(SHORT_CODE, request);
 
         assertThat(result).isPresent();
@@ -71,7 +71,7 @@ class ShortUrlServiceTest extends BaseTestSupport {
     @Test
     void updateShortUrl_shouldReturnEmptyIfNotFound() {
         when(repository.findByShortCode("not-found")).thenReturn(Optional.empty());
-        ShortenUrlUpdateRequest request = new ShortenUrlUpdateRequest(NEW_URL, true);
+        var request = new ShortenUrlUpdateDTO(NEW_URL, true);
 
         Optional<ShortUrl> result = service.updateShortUrl("not-found", request);
 

@@ -2,6 +2,7 @@ package com.dio.urlshortener.presentation;
 
 import com.dio.urlshortener.application.ShortUrlService;
 import com.dio.urlshortener.application.dto.ShortenUrlDTO;
+import com.dio.urlshortener.application.dto.ShortenUrlUpdateDTO;
 import com.dio.urlshortener.presentation.dto.ShortUrlStatsResponse;
 import com.dio.urlshortener.presentation.dto.ShortenUrlRequest;
 import com.dio.urlshortener.presentation.dto.ShortenUrlResponse;
@@ -65,7 +66,7 @@ public class ShortUrlController {
     )
     @GetMapping("/{shortCode}")
     public ResponseEntity<Void> redirect(
-            @NotBlank  @Parameter(description = "Código corto a redirigir") @PathVariable String shortCode) {
+            @NotBlank @Parameter(description = "Código corto a redirigir") @PathVariable String shortCode) {
 
         log.debug("redirect|in. shortCode='{}'", shortCode);
 
@@ -92,13 +93,13 @@ public class ShortUrlController {
     )
     @PutMapping("/shorten/{shortCode}")
     public ResponseEntity<Void> update(
-            @NotBlank  @Parameter(description = "Código corto a actualizar") @PathVariable String shortCode,
+            @NotBlank @Parameter(description = "Código corto a actualizar") @PathVariable String shortCode,
             @Valid @RequestBody ShortenUrlUpdateRequest request) {
 
         log.debug("update|in. Updating shortCode='{}' with longUrl='{}', isActive={}",
                 shortCode, request.longUrl(), request.isActive());
 
-        return service.updateShortUrl(shortCode, request)
+        return service.updateShortUrl(shortCode, new ShortenUrlUpdateDTO(request.longUrl(), request.isActive()))
                 .map(updated -> {
                     log.debug("update|out. shortCode='{}' updated successfully", shortCode);
                     return ResponseEntity.noContent().<Void>build();

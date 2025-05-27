@@ -1,14 +1,14 @@
 package com.dio.urlshortener.application;
 
 import com.dio.urlshortener.application.dto.ShortenUrlDTO;
-import com.dio.urlshortener.config.properties.AppProperties;
+import com.dio.urlshortener.application.dto.ShortenUrlUpdateDTO;
+import com.dio.urlshortener.application.port.BaseUrlProvider;
 import com.dio.urlshortener.domain.model.ShortUrl;
 import com.dio.urlshortener.domain.repository.ShortUrlRepository;
 import com.dio.urlshortener.domain.service.ShortCodeGenerator;
 import com.dio.urlshortener.infrastructure.cache.ShortUrlCache;
 import com.dio.urlshortener.presentation.dto.ShortUrlStatsResponse;
 import com.dio.urlshortener.presentation.dto.ShortenUrlResponse;
-import com.dio.urlshortener.presentation.dto.ShortenUrlUpdateRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +21,13 @@ public class ShortUrlService {
 
     private final ShortUrlRepository repository;
     private final ShortUrlCache cache;
-    private final AppProperties properties;
+    private final BaseUrlProvider baseUrlProvider;
     private final ShortCodeGenerator generator;
 
-    public ShortUrlService(ShortUrlRepository repository, ShortUrlCache cache, AppProperties properties, ShortCodeGenerator generator) {
+    public ShortUrlService(ShortUrlRepository repository, ShortUrlCache cache, BaseUrlProvider baseUrlProvider, ShortCodeGenerator generator) {
         this.repository = repository;
         this.cache = cache;
-        this.properties = properties;
+        this.baseUrlProvider = baseUrlProvider;
         this.generator = generator;
     }
 
@@ -36,7 +36,7 @@ public class ShortUrlService {
 
         ShortUrl shortUrl = createShortUrl(request);
 
-        String base = Optional.ofNullable(properties.getBaseUrl())
+        String base = Optional.ofNullable(baseUrlProvider.getBaseUrl())
                 .orElseGet(() -> servletRequest.getRequestURL()
                         .toString()
                         .replace(servletRequest.getRequestURI(), ""));
@@ -82,7 +82,7 @@ public class ShortUrlService {
     }
 
 
-    public Optional<ShortUrl> updateShortUrl(String shortCode, ShortenUrlUpdateRequest request) {
+    public Optional<ShortUrl> updateShortUrl(String shortCode, ShortenUrlUpdateDTO request) {
         log.debug("updateShortUrl|in. Attempting to update shortCode='{}'", shortCode);
 
         return findByShortCode(shortCode).map(existing -> {
